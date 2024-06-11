@@ -139,76 +139,84 @@ async function activateTurbo(acc, prick) {
 
 /** @param {Prick} prick */
 async function operation(acc, prick) {
-  console.log(`Account ID   : ${acc}`);
-  console.log(`Energy       : ${prick.user.energy}`);
-  console.log(`Balance      : ${prick.user.balance}`);
-  console.log(`Tap Power    : ${prick.user.clicks}`);
-  console.log(`Turbo        : ${prick.user.freeTurbo}`);
-  console.log(
-    `Turbo Status : ${Date(prick.user.turboEndedAt) >= Date.now()} ${
-      prick.user.turboEndedAt
-    }`
-  );
-  console.log(`Regeneration : ${prick.user.freeEnergyRegeneration}`);
-
-  const needRegen =
-    prick.user.energy < 50 && prick.user.freeEnergyRegeneration != 0;
-
-  if (needRegen) {
-    await regenEnergy(acc, prick);
-  }
-
-  const needTurbo =
-    prick.user.energy == prick.user.maxEnergy && prick.user.freeTurbo != 0;
-
-  if (needTurbo) {
-    await activateTurbo(acc, prick);
-  }
-
-  if (
-    prick.user.freeTurbo != 0 &&
-    prick.user.freeEnergyRegeneration == 0 &&
-    prick.user.energy != prick.user.maxEnergy
-  ) {
-    console.log(
-      "You still have turbo, waiting for your energy full and use turbo"
-    );
-  } else {
-    const tapCount = Math.floor(prick.user.energy / 50);
-    const tapData = [];
-
-    for (let num = 0; num < tapCount; num++) {
-      await new Promise((resolve) => setTimeout(resolve, 10));
-      tapData.push(Date.now());
+  try {
+    console.log(`Account ID   : ${acc}`);
+    if (prick.user.energy == undefined) {
+      console.log("Something wrong");
+      console.log("Restarting bot with same account");
+      console.log();
+      await operation(acc, prick);
     }
-
-    if (tapData.length > 0) {
-      await tap(tapData, prick)
-        .then(async (count) => {
-          console.log(`Successfully tap for ${count} Times`);
-          console.log(`Energy     : ${prick.user.energy}`);
-          console.log(`Balance    : ${prick.user.balance}`);
-          console.log();
-        })
-        .catch((err) => {
-          throw err;
-        });
-    }
-  }
-
-  if (
-    prick.user.freeEnergyRegeneration != 0 &&
-    prick.user.freeTurbo != 0 &&
-    prick.user.energy == prick.user.maxEnergy
-  ) {
+    console.log(`Energy       : ${prick.user.energy}`);
+    console.log(`Balance      : ${prick.user.balance}`);
+    console.log(`Tap Power    : ${prick.user.clicks}`);
     console.log(`Turbo        : ${prick.user.freeTurbo}`);
+    console.log(
+      `Turbo Status : ${Date(prick.user.turboEndedAt) >= Date.now()} ${
+        prick.user.turboEndedAt
+      }`
+    );
     console.log(`Regeneration : ${prick.user.freeEnergyRegeneration}`);
-    console.log("Restarting bot with same account");
-    console.log();
-    await operation(acc, prick);
-  } else {
-    client.close();
-  }
+
+    const needRegen =
+      prick.user.energy < 50 && prick.user.freeEnergyRegeneration != 0;
+
+    if (needRegen) {
+      await regenEnergy(acc, prick);
+    }
+
+    const needTurbo =
+      prick.user.energy == prick.user.maxEnergy && prick.user.freeTurbo != 0;
+
+    if (needTurbo) {
+      await activateTurbo(acc, prick);
+    }
+
+    if (
+      prick.user.freeTurbo != 0 &&
+      prick.user.freeEnergyRegeneration == 0 &&
+      prick.user.energy != prick.user.maxEnergy
+    ) {
+      console.log(
+        "You still have turbo, waiting for your energy full and use turbo"
+      );
+    } else {
+      const tapCount = Math.floor(prick.user.energy / 50);
+      const tapData = [];
+
+      for (let num = 0; num < tapCount; num++) {
+        await new Promise((resolve) => setTimeout(resolve, 10));
+        tapData.push(Date.now());
+      }
+
+      if (tapData.length > 0) {
+        await tap(tapData, prick)
+          .then(async (count) => {
+            console.log(`Successfully tap for ${count} Times`);
+            console.log(`Energy     : ${prick.user.energy}`);
+            console.log(`Balance    : ${prick.user.balance}`);
+            console.log();
+          })
+          .catch((err) => {
+            throw err;
+          });
+      }
+    }
+
+    if (
+      prick.user.freeEnergyRegeneration != 0 &&
+      prick.user.freeTurbo != 0 &&
+      prick.user.energy == prick.user.maxEnergy
+    ) {
+      console.log(`Turbo        : ${prick.user.freeTurbo}`);
+      console.log(`Regeneration : ${prick.user.freeEnergyRegeneration}`);
+      console.log("Restarting bot with same account");
+      console.log();
+      await operation(acc, prick);
+    } else {
+      client.close();
+    }
+  } catch (error) {}
 }
 
 async function startBot() {
