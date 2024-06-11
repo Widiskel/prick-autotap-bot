@@ -1,0 +1,22 @@
+{
+  "name": "prick-bot",
+  "version": "1.0.0",
+  "description": "Prick Bot",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "keywords": [
+    "metaboss"
+  ],
+  "author": "Widiskel",
+  "license": "ISC",
+  "dependencies": {
+    "ws": "^8.17.0"
+  }
+}
