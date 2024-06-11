@@ -108,7 +108,7 @@ async function regenEnergy(acc, prick) {
 /** @param {Prick} prick */
 async function activateTurbo(acc, prick) {
   try {
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async (resolve) => {
       console.log();
       console.log(`Activating Turbo`);
       const res = await fetch("https://api.prick.lol/v1/boost/turbo", {
@@ -130,7 +130,6 @@ async function activateTurbo(acc, prick) {
         console.log(`Turbo        : ${prick.user.freeTurbo}`);
         console.log(`Turbo End At : ${prick.user.turboEndedAt}`);
       }
-      console.log();
       resolve();
     });
   } catch (error) {
@@ -166,25 +165,35 @@ async function operation(acc, prick) {
     await activateTurbo(acc, prick);
   }
 
-  const tapCount = Math.floor(prick.user.energy / 50);
-  const tapData = [];
+  if (
+    prick.user.freeTurbo != 0 &&
+    prick.user.freeEnergyRegeneration == 0 &&
+    prick.user.energy != prick.user.maxEnergy
+  ) {
+    console.log(
+      "You still have turbo, waiting for your energy full and use turbo"
+    );
+  } else {
+    const tapCount = Math.floor(prick.user.energy / 50);
+    const tapData = [];
 
-  for (let num = 0; num < tapCount; num++) {
-    await new Promise((resolve) => setTimeout(resolve, 10));
-    tapData.push(Date.now());
-  }
+    for (let num = 0; num < tapCount; num++) {
+      await new Promise((resolve) => setTimeout(resolve, 10));
+      tapData.push(Date.now());
+    }
 
-  if (tapData.length > 0) {
-    await tap(tapData, prick)
-      .then(async (count) => {
-        console.log(`Successfully tap for ${count} Times`);
-        console.log(`Energy     : ${prick.user.energy}`);
-        console.log(`Balance    : ${prick.user.balance}`);
-        console.log();
-      })
-      .catch((err) => {
-        throw err;
-      });
+    if (tapData.length > 0) {
+      await tap(tapData, prick)
+        .then(async (count) => {
+          console.log(`Successfully tap for ${count} Times`);
+          console.log(`Energy     : ${prick.user.energy}`);
+          console.log(`Balance    : ${prick.user.balance}`);
+          console.log();
+        })
+        .catch((err) => {
+          throw err;
+        });
+    }
   }
 
   if (
