@@ -211,20 +211,33 @@ async function operation(acc, prick) {
   }
 }
 
-async function startBot(acc) {
+async function startBot() {
   try {
-    const prick = new Prick();
-    await initWss(acc, prick)
-      .then(async () => {
-        console.log("======================================");
-        console.log(`Starting Bot for account ${acc}`);
-        console.log("======================================");
-        console.log();
-        await operation(acc, prick);
-      })
-      .catch((err) => {
-        throw err;
-      });
+    for (const acc of account) {
+      const prick = new Prick();
+      await initWss(acc, prick)
+        .then(async () => {
+          console.log("======================================");
+          console.log(`Starting Bot for account ${acc}`);
+          console.log("======================================");
+          console.log();
+          await operation(acc, prick);
+        })
+        .catch((err) => {
+          throw err;
+        });
+      console.log("======================================");
+      console.log(`Account ${acc} complete \nContinue using next account`);
+      console.log("======================================");
+      console.log();
+      console.log();
+    }
+    await delay(10 * (60 * 1000)).then(() => {
+      console.log();
+      console.log("Restarting from first account...");
+      console.log();
+      startBot();
+    });
   } catch (error) {
     throw error;
   }
@@ -237,25 +250,12 @@ async function delay(ms) {
 }
 (async () => {
   try {
-    for (const acc of account) {
-      await startBot(acc);
-      console.log("======================================");
-      console.log(`Account ${acc} complete \nContinue using next account`);
-      console.log("======================================");
-      console.log();
-      console.log();
-    }
-    await delay(10 * (60 * 1000)).then(() => {
-      console.log();
-      console.log("Restarting from first account...");
-      console.log();
-      startBot(account[0]);
-    });
+    await startBot();
   } catch (error) {
     console.log("Error During executing bot", error);
     console.log();
     console.log("Restarting from first account...");
     console.log();
-    await startBot(account[0]);
+    await startBot();
   }
 })();
