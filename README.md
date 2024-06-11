@@ -17,7 +17,7 @@ Prick auto tap bot, What is Prick ? Prick is tap tap game on telegram that run o
 
 ## Register Prick Account
 
-- join metaboss on telegram [HERE](https://t.me/Prickgame_bot?start=ref-qk7EmEhPgBjwEso4prEVoW)
+- join prick on telegram [HERE](https://t.me/Prickgame_bot?start=ref-qk7EmEhPgBjwEso4prEVoW)
 - Start bot `/start`
 - Join TG Channel and Group chat
 - play `/play`
