@@ -8,7 +8,7 @@ Prick auto tap bot, What is Prick ? Prick is tap tap game on telegram that run o
 
 - Auto tap until energy 0
 - Auto Use Booster (ONLY WHEN MAX ENERGY)
-- Support miltipe account
+- Support multiple account
 
 ## Prerequisite
 
