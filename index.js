@@ -204,8 +204,7 @@ async function operation(acc, prick) {
     }
 
     if (
-      prick.user.freeEnergyRegeneration != 0 &&
-      prick.user.freeTurbo != 0 &&
+      (prick.user.freeEnergyRegeneration != 0 && prick.user.freeTurbo != 0) ||
       prick.user.energy == prick.user.maxEnergy
     ) {
       console.log(`Turbo        : ${prick.user.freeTurbo}`);
