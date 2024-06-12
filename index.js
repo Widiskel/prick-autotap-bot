@@ -213,6 +213,9 @@ async function operation(acc, prick) {
       console.log();
       await operation(acc, prick);
     } else {
+      console.log(`Turbo        : ${prick.user.freeTurbo}`);
+      console.log(`Regeneration : ${prick.user.freeEnergyRegeneration}`);
+      console.log();
       client.close();
     }
   } catch (error) {}
