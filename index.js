@@ -159,7 +159,7 @@ async function operation(acc, prick) {
     console.log(`Regeneration : ${prick.user.freeEnergyRegeneration}`);
 
     const needRegen =
-      prick.user.energy < 50 && prick.user.freeEnergyRegeneration != 0;
+      prick.user.energy < 100 && prick.user.freeEnergyRegeneration != 0;
 
     if (needRegen) {
       await regenEnergy(acc, prick);
