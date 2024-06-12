@@ -177,8 +177,9 @@ async function operation(acc, prick) {
       prick.user.freeEnergyRegeneration == 0 &&
       prick.user.energy != prick.user.maxEnergy
     ) {
+      console.log();
       console.log(
-        "You still have turbo, waiting for your energy full and use turbo"
+        "You still have turbo, but don't have energy regeneration waiting for your energy full and use turbo"
       );
     } else {
       const tapCount = Math.floor(prick.user.energy / 50);
