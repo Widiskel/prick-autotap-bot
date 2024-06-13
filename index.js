@@ -55,14 +55,21 @@ async function tap(tapData, prick) {
     console.log(`Tapping for ${tapData.length} Times`);
 
     client.send(JSON.stringify({ action: "tap", data: tapData }));
+    const timeout = setTimeout(() => {
+      console.log("No response received in 20 seconds.");
+      console.log();
+      initWss().then(resolve(0));
+    }, 20000);
     client.once("message", (event) => {
       const [action, data] = Helper.parseData(event);
       if (action == "result-tap") {
         prick.user.energy = data.energy;
         prick.user.balance = data.balance;
         console.log();
-        resolve(data.userClicks);
+        clearTimeout(timeout);
+        resolve(data.userClicks ?? 0);
       } else {
+        clearTimeout(timeout);
         reject(data);
       }
     });
