@@ -58,7 +58,7 @@ async function tap(tapData, prick) {
     const timeout = setTimeout(() => {
       console.log("No response received in 20 seconds.");
       console.log();
-      initWss().then(resolve(0));
+      reject("Account error, cannot get tap response");
     }, 20000);
     client.once("message", (event) => {
       const [action, data] = Helper.parseData(event);
@@ -146,6 +146,7 @@ async function activateTurbo(acc, prick) {
 
 /** @param {Prick} prick */
 async function operation(acc, prick) {
+  var troubleAccount = false;
   try {
     console.log(`Account ID   : ${acc}`);
     if (prick.user.energy == undefined) {
@@ -206,27 +207,34 @@ async function operation(acc, prick) {
             console.log();
           })
           .catch((err) => {
-            throw err;
+            console.log(
+              "Error while tapping using this account, continue with next account"
+            );
+            troubleAccount = true;
           });
       }
     }
 
-    if (
-      (prick.user.freeEnergyRegeneration != 0 && prick.user.freeTurbo != 0) ||
-      prick.user.energy == prick.user.maxEnergy
-    ) {
-      console.log(`Turbo        : ${prick.user.freeTurbo}`);
-      console.log(`Regeneration : ${prick.user.freeEnergyRegeneration}`);
-      console.log("Restarting bot with same account");
-      console.log();
-      await operation(acc, prick);
-    } else {
-      console.log(`Turbo        : ${prick.user.freeTurbo}`);
-      console.log(`Regeneration : ${prick.user.freeEnergyRegeneration}`);
-      console.log();
-      client.close();
+    if (!troubleAccount) {
+      if (
+        (prick.user.freeEnergyRegeneration != 0 && prick.user.freeTurbo != 0) ||
+        prick.user.energy == prick.user.maxEnergy
+      ) {
+        console.log(`Turbo        : ${prick.user.freeTurbo}`);
+        console.log(`Regeneration : ${prick.user.freeEnergyRegeneration}`);
+        console.log("Restarting bot with same account");
+        console.log();
+        await operation(acc, prick);
+      } else {
+        console.log(`Turbo        : ${prick.user.freeTurbo}`);
+        console.log(`Regeneration : ${prick.user.freeEnergyRegeneration}`);
+        console.log();
+        client.close();
+      }
     }
-  } catch (error) {}
+  } catch (error) {
+    throw error;
+  }
 }
 
 async function startBot() {
